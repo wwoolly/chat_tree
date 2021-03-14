@@ -1,4 +1,4 @@
-package ru.nsu.kokunin;
+package ru.nsu.kokunin.node;
 
 import java.net.InetAddress;
 
