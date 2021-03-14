@@ -1,20 +1,42 @@
 package ru.nsu.kokunin.node;
 
+import ru.nsu.kokunin.utils.Message;
+import ru.nsu.kokunin.utils.MessageMetadata;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentNavigableMap;
 
 public class TreeNode {
-    private final TreeNodeData data;
+    private final NodeData data;
+    private final List<NeighbourData> neighbours;
+
+    //GUID - message
+    private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap();
 
 
-    public TreeNode(TreeNodeData data) {
+    public TreeNode(NodeData data) {
         this.data = data;
+        this.neighbours = Collections.synchronizedList(new ArrayList<NeighbourData>(0));
     }
 
-    public void start() {
+    public synchronized boolean addNewNeighbour(NeighbourData neighbour) {
+        //надо?
+//        if (neighbour == null || neighbours.contains(neighbour)) return false;
 
+        return neighbours.add(neighbour);
     }
 
-    private boolean checkNode(NeighbourNode node) {
+    public synchronized boolean removeNeighbour(NeighbourData neighbour) {
+        return neighbours.remove(neighbour);
+    }
+
+    private boolean checkNode(NeighbourData node) {
 //        try {
 //            DatagramSocket datagramSocket = new DatagramSocket();
 //            byte[] pingData = "PING".getBytes(StandardCharsets.UTF_8);

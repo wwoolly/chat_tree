@@ -2,11 +2,11 @@ package ru.nsu.kokunin.node;
 
 import java.net.InetAddress;
 
-public class NeighbourNode {
+public class NeighbourData {
     final InetAddress address;
     final int port;
 
-    NeighbourNode(InetAddress address, int port) {
+    NeighbourData(InetAddress address, int port) {
         //maybe check after Node starting
         if (port < 0 || port > 0xFFFF) throw new IllegalArgumentException("Incorrect port! Value: " + port);
 
