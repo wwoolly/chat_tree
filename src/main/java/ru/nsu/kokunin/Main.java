@@ -5,15 +5,6 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class Main {
-    static class ChatTreeNodeParams {
-        String name;
-        int port;
-        int loseRatio;
-
-        Inet4Address neighbourAddress;
-        int neighbourPort;
-    }
-
     public static void parseArgs(String[] args) {
         String name = args[1];
         int port = Integer.parseInt(args[2]);
@@ -28,6 +19,9 @@ public class Main {
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             datagramSocket.setSoTimeout(200);
             datagramSocket.receive(receivePacket);
+
+//            а может вот так???
+//            InetAddress.getLocalHost().isReachable(8000);
         } catch (SocketTimeoutException e) {
 //            return /*true*/;
         } catch (IOException e) {
