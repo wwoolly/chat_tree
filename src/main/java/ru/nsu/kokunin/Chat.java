@@ -37,19 +37,21 @@ public class Chat implements MessageGetter {
     public static final long INITIALIZATION_DELAY = 10000;
     private static final int TIMER_TASKS_NUMBER = 3;
 
+    private TreeNode node;
+
     private Reader reader;
     private Sender sender;
     private Listener listener;
 
-    private TreeNode node;
-
 //    private final Timer timer = new Timer();
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
 
-    public Chat(Reader reader, Sender sender, Listener listener) {
-        this.reader = reader;
-        this.sender = sender;
-        this.listener = listener;
+    public Chat(TreeNode node) {
+        this.node = node;
+
+        this.reader = new Reader();
+        this.sender = new Sender(node);;
+        this.listener = new Listener();
     }
 
     void init() {

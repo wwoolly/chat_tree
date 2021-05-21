@@ -15,11 +15,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Sender sender = new Sender(parseArgs(args));
-        Reader reader = new Reader();
-        Listener listener = new Listener();
-
-        Chat chat = new Chat(reader, sender, listener);
+        Chat chat = new Chat(parseArgs(args));
         chat.init();
     }
 }
