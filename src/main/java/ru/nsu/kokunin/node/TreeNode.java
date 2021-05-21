@@ -11,15 +11,23 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 public class TreeNode {
-    private final NodeData data;
+    private final String name;
+    private final int port;
+    private final int loseRatio;
     private final List<NeighbourData> neighbours;
 
-    //GUID - message
+    //<GUID, message>
     private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap<>();
 
 
-    public TreeNode(NodeData data) {
-        this.data = data;
+    public TreeNode(String name, int port, int loseRatio) {
+        //maybe check after Node starting
+        if (port < 0 || port > 0xFFFF) throw new IllegalArgumentException("Incorrect port! Value: " + port);
+        if (loseRatio < 0 || loseRatio > 99) throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
+
+        this.name = name;
+        this.port = port;
+        this.loseRatio = loseRatio;
         this.neighbours = Collections.synchronizedList(new ArrayList<>(0));
     }
 
@@ -66,7 +74,7 @@ public class TreeNode {
     }
 
     public void cacheNewMessage(String messageText) {
-        Message message = new Message(data.getName(), messageText);
+        Message message = new Message(name, messageText);
         MessageMetadata messageMetadata = new MessageMetadata(message, null);
         messages.put(message.getGUID(), messageMetadata);
     }
