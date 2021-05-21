@@ -1,13 +1,11 @@
 package ru.nsu.kokunin.node;
 
+import ru.nsu.kokunin.ui.MessageGetter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -17,12 +15,12 @@ public class TreeNode {
     private final List<NeighbourData> neighbours;
 
     //GUID - message
-    private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap();
+    private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap<>();
 
 
     public TreeNode(NodeData data) {
         this.data = data;
-        this.neighbours = Collections.synchronizedList(new ArrayList<NeighbourData>(0));
+        this.neighbours = Collections.synchronizedList(new ArrayList<>(0));
     }
 
     public synchronized boolean addNewNeighbour(NeighbourData neighbour) {
@@ -65,5 +63,11 @@ public class TreeNode {
         } catch (IOException exc) {
             return false;
         }
+    }
+
+    public void cacheNewMessage(String messageText) {
+        Message message = new Message(data.getName(), messageText);
+        MessageMetadata messageMetadata = new MessageMetadata(message, null);
+        messages.put(message.getGUID(), messageMetadata);
     }
 }

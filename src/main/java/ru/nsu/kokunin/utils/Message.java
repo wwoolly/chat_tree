@@ -8,6 +8,7 @@ public class Message {
     private String GUID;
 
 
+
     public Message(String name, String text) {
         this.GUID = UUID.randomUUID().toString();
         this.name = name;
