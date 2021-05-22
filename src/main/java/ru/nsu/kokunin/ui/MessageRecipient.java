@@ -2,6 +2,6 @@ package ru.nsu.kokunin.ui;
 
 import ru.nsu.kokunin.utils.Message;
 
-public interface MessageGetter {
+public interface MessageRecipient {
     public void getMessage(String message);
 }

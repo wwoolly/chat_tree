@@ -1,6 +1,5 @@
 package ru.nsu.kokunin.node;
 
-import ru.nsu.kokunin.ui.MessageGetter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
 
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentNavigableMap;
 
 public class TreeNode {
     private final String name;

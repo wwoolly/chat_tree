@@ -3,14 +3,14 @@ package ru.nsu.kokunin;
 import ru.nsu.kokunin.node.TreeNode;
 import ru.nsu.kokunin.services.Receiver;
 import ru.nsu.kokunin.services.Sender;
-import ru.nsu.kokunin.ui.MessageGetter;
+import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Chat implements MessageGetter {
+public class Chat implements MessageRecipient {
     /**
      * Time constant in milliseconds.
      * Interval between message confirmation requests.
