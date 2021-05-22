@@ -76,4 +76,24 @@ public class TreeNode {
         MessageMetadata messageMetadata = new MessageMetadata(message, null);
         messages.put(message.getGUID(), messageMetadata);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getLoseRatio() {
+        return loseRatio;
+    }
+
+    public List<NeighbourData> getNeighbours() {
+        return neighbours;
+    }
+
+    public ConcurrentMap<String, MessageMetadata> getMessages() {
+        return messages;
+    }
+
+    public int getPort() {
+        return port;
+    }
 }

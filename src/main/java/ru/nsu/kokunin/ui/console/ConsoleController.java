@@ -4,7 +4,6 @@ import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.MessageReader;
 import ru.nsu.kokunin.ui.MessageWriter;
 
-import java.util.Queue;
 import java.util.concurrent.*;
 
 public class ConsoleController implements Runnable {
@@ -27,8 +26,8 @@ public class ConsoleController implements Runnable {
         this.writerExecutor = Executors.newSingleThreadScheduledExecutor();
     }
 
-    public void addMessageGetter(MessageRecipient getter) {
-        messageRecipients.add(getter);
+    public void addMessageRecipient(MessageRecipient recipient) {
+        messageRecipients.add(recipient);
     }
 
     public void start() {

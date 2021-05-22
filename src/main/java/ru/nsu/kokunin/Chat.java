@@ -6,9 +6,9 @@ import ru.nsu.kokunin.services.Sender;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 
+import java.net.DatagramSocket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Chat implements MessageRecipient {
     /**
@@ -43,34 +43,20 @@ public class Chat implements MessageRecipient {
 //    private final Timer timer = new Timer();
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
 
-    public Chat(TreeNode node) {
+    public Chat(TreeNode node, Receiver receiver) {
         this.node = node;
 
-        this.receiver = new Receiver();
+        this.receiver = receiver;
         this.sender = new Sender(node);
     }
 
     void init() {
-        timerExecutor.scheduleAtFixedRate(() -> {
-//                    System.out.println("Aee zaglushka");
-            }, INITIALIZATION_DELAY, CONFIRM_TIMEOUT, TimeUnit.MILLISECONDS);
-//        timer.schedule(, 0, CONFIRM_TIMEOUT);
-//        timer.schedule(, 0, ALIVE_MESSAGES_INTERVAL);
-//        timer.schedule(, 0, KEEP_ALIVE_TIMEOUT);
-//        timerExecutor.scheduleAtFixedRate(() -> {
-//                var consoleInputMessage = listener.getMessage();
-//                if (consoleInputMessage != null) {
-//                    System.out.println(consoleInputMessage);
-//                }
-//            }, INITIALIZATION_DELAY, MESSAGE_SCAN_INTERVAL, TimeUnit.MILLISECONDS);
-
         ConsoleController controller = new ConsoleController();
-        controller.addMessageGetter(this);
+        controller.addMessageRecipient(this);
         controller.start();
     }
 
     void terminate() {
-//        timer.cancel();
         timerExecutor.shutdownNow();
     }
 
