@@ -1,13 +1,11 @@
 package ru.nsu.kokunin;
 
 import ru.nsu.kokunin.node.TreeNode;
-import ru.nsu.kokunin.services.Listener;
-import ru.nsu.kokunin.services.Reader;
+import ru.nsu.kokunin.services.Receiver;
 import ru.nsu.kokunin.services.Sender;
 import ru.nsu.kokunin.ui.MessageGetter;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 
-import java.util.EventListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,9 +37,8 @@ public class Chat implements MessageGetter {
 
     private TreeNode node;
 
-    private Reader reader;
+    private Receiver receiver;
     private Sender sender;
-    private Listener listener;
 
 //    private final Timer timer = new Timer();
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
@@ -49,14 +46,13 @@ public class Chat implements MessageGetter {
     public Chat(TreeNode node) {
         this.node = node;
 
-        this.reader = new Reader();
-        this.sender = new Sender(node);;
-        this.listener = new Listener();
+        this.receiver = new Receiver();
+        this.sender = new Sender(node);
     }
 
     void init() {
         timerExecutor.scheduleAtFixedRate(() -> {
-                    System.out.println("Aee zaglushka");
+//                    System.out.println("Aee zaglushka");
             }, INITIALIZATION_DELAY, CONFIRM_TIMEOUT, TimeUnit.MILLISECONDS);
 //        timer.schedule(, 0, CONFIRM_TIMEOUT);
 //        timer.schedule(, 0, ALIVE_MESSAGES_INTERVAL);
