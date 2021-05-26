@@ -6,7 +6,7 @@ import ru.nsu.kokunin.ui.MessageWriter;
 
 import java.util.concurrent.*;
 
-public class ConsoleController implements Runnable {
+public class ConsoleController {
     private static final long OUTPUT_MESSAGE_WRITING_INTERVAL = 1000L;
     private static final long WRITER_INITIALIZATION_DELAY = 3000L;
 
@@ -31,7 +31,11 @@ public class ConsoleController implements Runnable {
     }
 
     public void start() {
-        writerExecutor.scheduleAtFixedRate(this, WRITER_INITIALIZATION_DELAY, OUTPUT_MESSAGE_WRITING_INTERVAL, TimeUnit.MILLISECONDS);
+        writerExecutor.scheduleAtFixedRate(() -> {
+            while (!outputMessagesQueue.isEmpty()) {
+                consoleWriter.outMessage(outputMessagesQueue.poll());
+            }
+        }, WRITER_INITIALIZATION_DELAY, OUTPUT_MESSAGE_WRITING_INTERVAL, TimeUnit.MILLISECONDS);
 
         while(isActive) {
             while (consoleReader.hasMessage()) {
@@ -58,12 +62,5 @@ public class ConsoleController implements Runnable {
         }
 
         outputMessagesQueue.add(message);
-    }
-
-    @Override
-    public void run() {
-        while (!outputMessagesQueue.isEmpty()) {
-            consoleWriter.outMessage(outputMessagesQueue.poll());
-        }
     }
 }
