@@ -1,5 +1,7 @@
 package ru.nsu.kokunin.ui.console;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.MessageReader;
 import ru.nsu.kokunin.ui.MessageWriter;
@@ -9,6 +11,8 @@ import java.util.concurrent.*;
 public class ConsoleController {
     private static final long OUTPUT_MESSAGE_WRITING_INTERVAL = 1000L;
     private static final long WRITER_INITIALIZATION_DELAY = 3000L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConsoleController.class);
 
     private final MessageReader consoleReader;
 
@@ -35,7 +39,10 @@ public class ConsoleController {
             while (!outputMessagesQueue.isEmpty()) {
                 consoleWriter.outMessage(outputMessagesQueue.poll());
             }
+            LOG.debug("Writer executor started");
         }, WRITER_INITIALIZATION_DELAY, OUTPUT_MESSAGE_WRITING_INTERVAL, TimeUnit.MILLISECONDS);
+
+        LOG.info("Console controller started!");
 
         while(isActive) {
             while (consoleReader.hasMessage()) {
@@ -45,8 +52,9 @@ public class ConsoleController {
                     recipient.getMessage(messageText);
                 }
 
+                LOG.debug("Message <{}> read from console", messageText);
                 //DEBUG
-                outMessage(messageText);
+                //outMessage(messageText);
             }
         }
     }
@@ -54,6 +62,7 @@ public class ConsoleController {
     public void stop() {
         isActive = false;
         writerExecutor.shutdown();
+        LOG.info("Console controller shut down");
     }
 
     public void outMessage(String message) {
@@ -61,6 +70,7 @@ public class ConsoleController {
             return;
         }
 
+        LOG.debug("Message <{}> added to output queue", message);
         outputMessagesQueue.add(message);
     }
 }
