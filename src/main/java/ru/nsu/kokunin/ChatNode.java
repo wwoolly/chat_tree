@@ -2,7 +2,10 @@ package ru.nsu.kokunin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.nsu.kokunin.net.Receiver;
+import ru.nsu.kokunin.net.Sender;
 import ru.nsu.kokunin.ui.MessageRecipient;
+import ru.nsu.kokunin.utils.MessageType;
 import ru.nsu.kokunin.utils.NeighbourData;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 import ru.nsu.kokunin.utils.Message;
@@ -44,6 +47,9 @@ public class ChatNode implements MessageRecipient {
     private final String name;
     private final int loseRatio;
     private final DatagramSocket socket;
+    private final Sender sender;
+    private final Receiver receiver;
+    private final ConsoleController ioController;
     private final List<NeighbourData> neighbours = new CopyOnWriteArrayList<>();
 
     //<GUID, message>
@@ -57,6 +63,10 @@ public class ChatNode implements MessageRecipient {
         this.loseRatio = loseRatio;
         this.name = name;
         this.socket = socket;
+
+        this.ioController = new ConsoleController();
+        this.sender = new Sender(this, socket);
+        this.receiver = new Receiver(this, socket, loseRatio);
     }
 
     public void init() {
@@ -65,13 +75,19 @@ public class ChatNode implements MessageRecipient {
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
-        ConsoleController ioController = new ConsoleController();
         ioController.addMessageRecipient(this);
         ioController.start();
     }
 
     public void handleMessage(MessageMetadata message) {
+        MessageType type = message.getMessage().getType();
 
+        if (type.equals(MessageType.CHAT)) {
+            message.setChecked(true);
+//            messages.put(message.getMessage().getGUID(), message);
+//            String outFormatted message
+//            ioController.outMessage();
+        }
     }
 
     public void addSentMessageToHistory(String messageGUID, InetSocketAddress receiverAddress) {
@@ -83,10 +99,16 @@ public class ChatNode implements MessageRecipient {
         timerExecutor.shutdown();
     }
 
+    public List<NeighbourData> getNeighbours() {
+        return neighbours;
+    }
+
     @Override
     public void getMessage(String messageText) {
-        Message message = new Message(name, messageText);
-        MessageMetadata messageMetadata = new MessageMetadata(message, null /*socket.getLocalAddress()*/);
-        messages.put(message.getGUID(), messageMetadata);
+        Message message = new Message(name, messageText, MessageType.CHAT);
+        MessageMetadata messageMetadata = new MessageMetadata(message, (InetSocketAddress) socket.getLocalSocketAddress());
+        messageMetadata.setChecked(true);
+//        messages.put(message.getGUID(), messageMetadata);
+        sender.broadcast(messageMetadata);
     }
 }

@@ -13,22 +13,18 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
-class Sender {
+public class Sender {
     private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
 
     private final ChatNode chatNode;
     private final DatagramSocket socket;
-    private final List<NeighbourData> neighbours;
 
     private final JsonConverter jsonConverter = new JsonConverter();
 
-    Sender(ChatNode chatNode, DatagramSocket socket, List<NeighbourData> neighbours) {
+    public Sender(ChatNode chatNode, DatagramSocket socket) {
         this.chatNode = chatNode;
         this.socket = socket;
-        this.neighbours = neighbours;
     }
 
     public void send(Message message, InetSocketAddress receiver) {
@@ -42,7 +38,7 @@ class Sender {
     }
 
     public void broadcast(MessageMetadata message) {
-        neighbours.forEach(neighbour -> {
+        chatNode.getNeighbours().forEach(neighbour -> {
             if (neighbour.getAddress().equals(message.getSenderAddress())) {
                 return;
             }
