@@ -6,12 +6,11 @@ import ru.nsu.kokunin.NetworkController;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
-import ru.nsu.kokunin.utils.MessageType;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
@@ -37,27 +36,17 @@ public class Receiver implements Runnable {
         this.loseRatio = loseRatio;
     }
 
-    /*public byte[] receiveMessage() {
-        byte[] rawMessage = null;
-        DatagramPacket packetToReceive = new DatagramPacket(receiverBuffer, BUFFER_SIZE);
+    public void stop() {
+        isActive = false;
+    }
 
-        try {
-            socket.receive(packetToReceive);
-            rawMessage = packetToReceive.getData();
-        } catch (IOException exc) {
-            //TODO: add exception handler
-            exc.printStackTrace();
-        }
-
-        return rawMessage;
-    }*/
 
     @Override
     public void run() {
-        Message message;
-        InetAddress senderAddress;
         DatagramPacket packetToReceive = new DatagramPacket(receiverBuffer, BUFFER_SIZE);
-        byte[] rawMessage = null;
+        byte[] rawMessage;
+        Message message;
+        InetSocketAddress senderAddress;
 
         while(isActive) {
             try {
@@ -68,11 +57,13 @@ public class Receiver implements Runnable {
                 }
 
                 rawMessage = packetToReceive.getData();
-                String jsonMessage = new String(rawMessage, StandardCharsets.UTF_16BE);
+                String jsonMessage = new String(rawMessage, StandardCharsets.UTF_8);
                 message = jsonConverter.fromJson(jsonMessage, Message.class);
-                senderAddress = packetToReceive.getAddress();
+                senderAddress = (InetSocketAddress) packetToReceive.getSocketAddress();
 
                 controller.handleMessage(new MessageMetadata(message, senderAddress));
+
+                packetToReceive.setLength(BUFFER_SIZE);
             } catch (IOException exc) {
                 LOG.error("During socket receiving an exception occurred!", exc);
             }

@@ -2,15 +2,11 @@ package ru.nsu.kokunin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
-import ru.nsu.kokunin.utils.MessageType;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.nio.charset.StandardCharsets;
+import java.net.InetSocketAddress;
 import java.util.Map;
 
 public class NetworkController {
@@ -28,6 +24,10 @@ public class NetworkController {
     }
 
     public void handleMessage(MessageMetadata message) {
+
+    }
+
+    public void addSentMessageToHistory(String messageGUID, InetSocketAddress receiverAddress) {
 
     }
 }

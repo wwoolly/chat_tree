@@ -1,12 +1,13 @@
 package ru.nsu.kokunin.node;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class NeighbourData {
-    final InetAddress address;
+    final InetSocketAddress address;
     final int port;
 
-    NeighbourData(InetAddress address, int port) {
+    NeighbourData(InetSocketAddress address, int port) {
         //maybe check after Node starting
         if (port < 0 || port > 0xFFFF) throw new IllegalArgumentException("Incorrect port! Value: " + port);
 
@@ -14,7 +15,7 @@ public class NeighbourData {
         this.port = port;
     }
 
-    public InetAddress getAddress() {
+    public InetSocketAddress getAddress() {
         return address;
     }
 

@@ -34,12 +34,16 @@ public class ConsoleController {
         messageRecipients.add(recipient);
     }
 
+    public void removeMessageRecipient(MessageRecipient recipient) {
+        messageRecipients.remove(recipient);
+    }
+
     public void start() {
         writerExecutor.scheduleAtFixedRate(() -> {
             while (!outputMessagesQueue.isEmpty()) {
                 consoleWriter.outMessage(outputMessagesQueue.poll());
             }
-            LOG.debug("Writer executor started");
+            LOG.trace("Writer executor started");
         }, WRITER_INITIALIZATION_DELAY, OUTPUT_MESSAGE_WRITING_INTERVAL, TimeUnit.MILLISECONDS);
 
         LOG.info("Console controller started!");
@@ -53,8 +57,6 @@ public class ConsoleController {
                 }
 
                 LOG.debug("Message <{}> read from console", messageText);
-                //DEBUG
-                //outMessage(messageText);
             }
         }
     }

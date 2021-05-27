@@ -65,7 +65,7 @@ public class TreeNode {
 //        } catch (IOException exc) {}
 
         try {
-            return node.address.isReachable(200);
+            return node.address.getAddress().isReachable(200);
         } catch (IOException exc) {
             return false;
         }
