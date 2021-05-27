@@ -1,9 +1,5 @@
 package ru.nsu.kokunin;
 
-import ru.nsu.kokunin.node.TreeNode;
-import ru.nsu.kokunin.services.Receiver;
-import ru.nsu.kokunin.services.Sender;
-
 import java.net.DatagramSocket;
 import java.net.SocketException;
 

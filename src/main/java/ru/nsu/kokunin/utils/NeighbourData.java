@@ -1,11 +1,11 @@
-package ru.nsu.kokunin.node;
+package ru.nsu.kokunin.utils;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 public class NeighbourData {
-    final InetSocketAddress address;
-    final int port;
+    final private InetSocketAddress address;
+    final private int port;
 
     NeighbourData(InetSocketAddress address, int port) {
         //maybe check after Node starting

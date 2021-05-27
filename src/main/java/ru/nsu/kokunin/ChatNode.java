@@ -2,8 +2,8 @@ package ru.nsu.kokunin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.kokunin.node.NeighbourData;
-import ru.nsu.kokunin.ui.MessageRecipient;
+import ru.nsu.kokunin.net.NetworkController;
+import ru.nsu.kokunin.utils.NeighbourData;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
@@ -58,13 +58,13 @@ public class ChatNode implements MessageRecipient {
         this.socket = socket;
     }
 
-    void init() {
+    public void init() {
         if (loseRatio < 0 || loseRatio > 99) {
             LOG.error("Attempt to initialize ChatNode with the incorrect lose ratio. Value: {} not in [1,99]", loseRatio);
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
-        NetworkController networkController = new NetworkController(socket);
+        NetworkController networkController = new NetworkController(this, socket, loseRatio);
 //        executor.submit(networkController);
 
         ConsoleController ioController = new ConsoleController();

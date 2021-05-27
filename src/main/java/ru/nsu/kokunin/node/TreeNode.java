@@ -2,6 +2,7 @@ package ru.nsu.kokunin.node;
 
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.NeighbourData;
 
 import java.io.IOException;
 import java.util.*;
@@ -65,7 +66,7 @@ public class TreeNode {
 //        } catch (IOException exc) {}
 
         try {
-            return node.address.getAddress().isReachable(200);
+            return node.getAddress().getAddress().isReachable(200);
         } catch (IOException exc) {
             return false;
         }

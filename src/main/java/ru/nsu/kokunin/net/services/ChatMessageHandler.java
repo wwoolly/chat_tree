@@ -1,4 +1,4 @@
-package ru.nsu.kokunin.services;
+package ru.nsu.kokunin.net.services;
 
 public class ChatMessageHandler {
 

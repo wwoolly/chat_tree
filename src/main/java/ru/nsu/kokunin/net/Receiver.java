@@ -1,8 +1,7 @@
-package ru.nsu.kokunin.services;
+package ru.nsu.kokunin.net;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.kokunin.NetworkController;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
@@ -14,7 +13,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
-public class Receiver implements Runnable {
+class Receiver implements Runnable {
     private static final int BUFFER_SIZE = 524288;
     private static final int MAX_LOSE_VALUE = 99;
 
@@ -30,7 +29,7 @@ public class Receiver implements Runnable {
 
     private volatile boolean isActive = true;
 
-    public Receiver(NetworkController controller, DatagramSocket socket, int loseRatio) {
+    Receiver(NetworkController controller, DatagramSocket socket, int loseRatio) {
         this.controller = controller;
         this.socket = socket;
         this.loseRatio = loseRatio;
