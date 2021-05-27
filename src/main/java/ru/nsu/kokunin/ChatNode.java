@@ -4,16 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.net.Receiver;
 import ru.nsu.kokunin.net.Sender;
+import ru.nsu.kokunin.net.services.MessageHandler;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.utils.MessageType;
-import ru.nsu.kokunin.utils.NeighbourData;
+import ru.nsu.kokunin.utils.NeighbourMetadata;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
 
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -44,19 +45,20 @@ public class ChatNode implements MessageRecipient {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChatNode.class);
 
-    private final String name;
-    private final int loseRatio;
-    private final DatagramSocket socket;
-    private final Sender sender;
-    private final Receiver receiver;
-    private final ConsoleController ioController;
-    private final List<NeighbourData> neighbours = new CopyOnWriteArrayList<>();
+    public final String name;
+    public final int loseRatio;
+    public final DatagramSocket socket;
+    public final Sender sender;
+    public final Receiver receiver;
+    public final ConsoleController ioController;
+    public final Map<InetSocketAddress, NeighbourMetadata> neighbours = new ConcurrentHashMap<>();
 
     //<GUID, message>
-    private final Map<String, MessageMetadata> messages = new ConcurrentHashMap<>();
+    public final Map<String, MessageMetadata> messages = new ConcurrentHashMap<>();
 
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<MessageType, MessageHandler> handlers = new HashMap<>();
 
     public ChatNode(String name, int loseRatio, DatagramSocket socket) {
 //        this.neighbours =
@@ -81,14 +83,7 @@ public class ChatNode implements MessageRecipient {
 
     public void handleMessage(MessageMetadata message) {
         MessageType type = message.getMessage().getType();
-
-        if (type.equals(MessageType.CHAT)) {
-//            messages.put(message.getMessage().getGUID(), message);
-            ioController.outMessage(message.getMessage());
-
-            message.setChecked(true);
-            
-        }
+        handlers.get(type).handle(message, this);
     }
 
     public void addSentMessageToHistory(String messageGUID, InetSocketAddress receiverAddress) {
@@ -100,7 +95,7 @@ public class ChatNode implements MessageRecipient {
         timerExecutor.shutdown();
     }
 
-    public List<NeighbourData> getNeighbours() {
+    public Map<InetSocketAddress , NeighbourMetadata> getNeighbours() {
         return neighbours;
     }
 

@@ -1,5 +1,15 @@
 package ru.nsu.kokunin.net.services;
 
-public class ChatMessageHandler {
+import ru.nsu.kokunin.ChatNode;
+import ru.nsu.kokunin.utils.MessageMetadata;
 
+public class ChatMessageHandler implements MessageHandler {
+
+    @Override
+    public void handle(MessageMetadata message, ChatNode chatNode) {
+        chatNode.ioController.outMessage(message.getMessage());
+
+        message.setChecked(true);
+        chatNode.sender.broadcast(message);
+    }
 }

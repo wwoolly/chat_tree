@@ -1,5 +1,12 @@
 package ru.nsu.kokunin.net.services;
 
-public class ACKMessageHandler {
+import ru.nsu.kokunin.ChatNode;
+import ru.nsu.kokunin.utils.MessageMetadata;
 
+public class ACKMessageHandler implements MessageHandler {
+
+    @Override
+    public void handle(MessageMetadata message, ChatNode chatNode) {
+
+    }
 }
