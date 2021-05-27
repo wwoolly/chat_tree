@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.MessageReader;
 import ru.nsu.kokunin.ui.MessageWriter;
+import ru.nsu.kokunin.utils.Message;
 
 import java.util.concurrent.*;
 
@@ -17,7 +18,7 @@ public class ConsoleController {
     private final MessageReader consoleReader;
 
     private final MessageWriter consoleWriter;
-    private final ConcurrentLinkedQueue<String> outputMessagesQueue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Message> outputMessagesQueue = new ConcurrentLinkedQueue<>();
     private final ScheduledExecutorService writerExecutor;
 
     private volatile boolean isActive = true;
@@ -67,7 +68,7 @@ public class ConsoleController {
         LOG.info("Console controller shut down");
     }
 
-    public void outMessage(String message) {
+    public void outMessage(Message message) {
         if (message == null) {
             return;
         }

@@ -83,10 +83,11 @@ public class ChatNode implements MessageRecipient {
         MessageType type = message.getMessage().getType();
 
         if (type.equals(MessageType.CHAT)) {
-            message.setChecked(true);
 //            messages.put(message.getMessage().getGUID(), message);
-//            String outFormatted message
-//            ioController.outMessage();
+            ioController.outMessage(message.getMessage());
+
+            message.setChecked(true);
+            
         }
     }
 
