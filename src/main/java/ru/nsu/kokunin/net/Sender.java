@@ -2,6 +2,7 @@ package ru.nsu.kokunin.net;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.NeighbourData;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
@@ -18,14 +19,14 @@ import java.util.Map;
 class Sender {
     private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
 
-    private final NetworkController controller;
+    private final ChatNode chatNode;
     private final DatagramSocket socket;
     private final List<NeighbourData> neighbours;
 
     private final JsonConverter jsonConverter = new JsonConverter();
 
-    Sender(NetworkController controller, DatagramSocket socket, List<NeighbourData> neighbours) {
-        this.controller = controller;
+    Sender(ChatNode chatNode, DatagramSocket socket, List<NeighbourData> neighbours) {
+        this.chatNode = chatNode;
         this.socket = socket;
         this.neighbours = neighbours;
     }
@@ -47,7 +48,7 @@ class Sender {
             }
 
             if (message.isChecked()) {
-                controller.addSentMessageToHistory(message.getMessage().getGUID(), message.getSenderAddress());
+                chatNode.addSentMessageToHistory(message.getMessage().getGUID(), message.getSenderAddress());
             }
 
             send(message.getMessage(), neighbour.getAddress());

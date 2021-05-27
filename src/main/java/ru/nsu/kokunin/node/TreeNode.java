@@ -24,6 +24,9 @@ public class TreeNode {
         if (port < 0 || port > 0xFFFF) throw new IllegalArgumentException("Incorrect port! Value: " + port);
         if (loseRatio < 0 || loseRatio > 99) throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
 
+//        this.sender = new Sender(this, socket, neighbours);
+//        this.receiver = new Receiver(this, socket, loseRatio);
+
         this.name = name;
         this.port = port;
         this.loseRatio = loseRatio;

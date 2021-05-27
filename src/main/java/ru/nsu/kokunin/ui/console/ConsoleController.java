@@ -2,7 +2,7 @@ package ru.nsu.kokunin.ui.console;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.kokunin.MessageRecipient;
+import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.ui.MessageReader;
 import ru.nsu.kokunin.ui.MessageWriter;
 

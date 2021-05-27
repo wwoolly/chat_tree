@@ -2,13 +2,14 @@ package ru.nsu.kokunin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nsu.kokunin.net.NetworkController;
+import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.utils.NeighbourData;
 import ru.nsu.kokunin.ui.console.ConsoleController;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
 
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -43,7 +44,7 @@ public class ChatNode implements MessageRecipient {
     private final String name;
     private final int loseRatio;
     private final DatagramSocket socket;
-    private final List<NeighbourData> neighbours = new CopyOnWriteArrayList<>();;
+    private final List<NeighbourData> neighbours = new CopyOnWriteArrayList<>();
 
     //<GUID, message>
     private final Map<String, MessageMetadata> messages = new ConcurrentHashMap<>();
@@ -64,12 +65,17 @@ public class ChatNode implements MessageRecipient {
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
-        NetworkController networkController = new NetworkController(this, socket, loseRatio);
-//        executor.submit(networkController);
-
         ConsoleController ioController = new ConsoleController();
         ioController.addMessageRecipient(this);
         ioController.start();
+    }
+
+    public void handleMessage(MessageMetadata message) {
+
+    }
+
+    public void addSentMessageToHistory(String messageGUID, InetSocketAddress receiverAddress) {
+
     }
 
     void terminate() {

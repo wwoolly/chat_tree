@@ -2,6 +2,7 @@ package ru.nsu.kokunin.net;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
@@ -13,13 +14,13 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
-class Receiver implements Runnable {
+public class Receiver implements Runnable {
     private static final int BUFFER_SIZE = 524288;
     private static final int MAX_LOSE_VALUE = 99;
 
     private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
-    private final NetworkController controller;
+    private final ChatNode chatNode;
     private final DatagramSocket socket;
     private final int loseRatio;
 
@@ -29,8 +30,8 @@ class Receiver implements Runnable {
 
     private volatile boolean isActive = true;
 
-    Receiver(NetworkController controller, DatagramSocket socket, int loseRatio) {
-        this.controller = controller;
+    public Receiver(ChatNode chatNode, DatagramSocket socket, int loseRatio) {
+        this.chatNode = chatNode;
         this.socket = socket;
         this.loseRatio = loseRatio;
     }
@@ -60,7 +61,7 @@ class Receiver implements Runnable {
                 message = jsonConverter.fromJson(jsonMessage, Message.class);
                 senderAddress = (InetSocketAddress) packetToReceive.getSocketAddress();
 
-                controller.handleMessage(new MessageMetadata(message, senderAddress));
+                chatNode.handleMessage(new MessageMetadata(message, senderAddress));
 
                 packetToReceive.setLength(BUFFER_SIZE);
             } catch (IOException exc) {
