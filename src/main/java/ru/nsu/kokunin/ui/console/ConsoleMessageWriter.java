@@ -12,7 +12,6 @@ public class ConsoleMessageWriter implements MessageWriter {
 
     @Override
     public void outServiceMessage(String message) {
-
         //TODO add format
 //        System.out.println(String.format(message, ));
         System.out.println(message);

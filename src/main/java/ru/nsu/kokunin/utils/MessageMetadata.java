@@ -7,7 +7,10 @@ public class MessageMetadata {
     private InetSocketAddress senderAddress;
 
     /**
-     * Требуется ли проверка доставки сообщения
+     * Требуется ли проверка доставки сообщения\n
+     * Учитывается только при отправке сообщения,
+     * при приёме считаем, что Handler'ы определяют
+     * это опираясь на тип сообщения.
      * */
     boolean isChecked;
 

@@ -89,8 +89,18 @@ public class ChatNode implements MessageRecipient {
     }
 
     public void registerNewNeighbour(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
+        LOG.info("Connected new node! Name: {}, Address: {}, Vice: {}",
+                metadata.getName(), neighbourAddress, metadata.getVice());
+
         String serviceMessage = metadata.getName() + " joined the chat!";
         ioController.outServiceMessage(serviceMessage);
+        updateNeighbourMetadata(neighbourAddress, metadata);
+    }
+
+    public void updateNeighbourMetadata(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
+        LOG.info("New data about neighbour \'{}\'; Address: {}; Vice: {},  saved",
+                metadata.getName(), neighbourAddress, metadata.getVice());
+
         metadata.setAlive(true);
         neighbours.put(neighbourAddress, metadata);
     }
