@@ -6,6 +6,7 @@ import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.MessageType;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -30,6 +31,8 @@ public class Sender {
         this.socket = socket;
     }
 
+    /**
+     * Небезопасный метод. Не требует от контроллера подтверждения доставки сообщения. */
     public void send(Message message, InetSocketAddress receiver) {
         try {
             byte[] rawMessage = jsonConverter.toJson(message).getBytes(StandardCharsets.UTF_8);
@@ -41,18 +44,22 @@ public class Sender {
     }
 
     public void broadcast(MessageMetadata message) {
-
-        executor.submit(() -> chatNode.getNeighbours().keySet().forEach(neighbourAddress -> {
+        executor.submit(() -> chatNode.neighbours.keySet().forEach(neighbourAddress -> {
             if (neighbourAddress.equals(message.getSenderAddress())) {
                 return;
             }
 
             if (message.isChecked()) {
-                chatNode.addSentMessageToHistory(message.getMessage().getGUID(), message.getSenderAddress());
+                chatNode.addSentMessageToHistory(message.getMessage().getGUID(), message);
             }
 
             send(message.getMessage(), neighbourAddress);
         }));
+    }
+
+    public void sendACKMessage(String messageToConfirmGUID, InetSocketAddress receiverAddress) {
+        Message confirmMessage = new Message(chatNode.name, messageToConfirmGUID, MessageType.ACK);
+        send(confirmMessage, receiverAddress);
     }
 
 

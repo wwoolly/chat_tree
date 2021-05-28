@@ -76,4 +76,8 @@ public class ConsoleController {
         LOG.debug("Message <{}> added to output queue", message);
         outputMessagesQueue.add(message);
     }
+
+    public void outServiceMessage(String text) {
+        consoleWriter.outServiceMessage(text);
+    }
 }

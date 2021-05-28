@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.net.Receiver;
 import ru.nsu.kokunin.net.Sender;
-import ru.nsu.kokunin.net.services.MessageHandler;
+import ru.nsu.kokunin.net.handlers.MessageHandler;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.utils.MessageType;
 import ru.nsu.kokunin.utils.NeighbourMetadata;
@@ -51,10 +51,12 @@ public class ChatNode implements MessageRecipient {
     public final Sender sender;
     public final Receiver receiver;
     public final ConsoleController ioController;
+
+    public InetSocketAddress vice = null;
     public final Map<InetSocketAddress, NeighbourMetadata> neighbours = new ConcurrentHashMap<>();
 
     //<GUID, message>
-    public final Map<String, MessageMetadata> messages = new ConcurrentHashMap<>();
+    public final Map<String, MessageMetadata> sentMessages = new ConcurrentHashMap<>();
 
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -86,17 +88,20 @@ public class ChatNode implements MessageRecipient {
         handlers.get(type).handle(message, this);
     }
 
-    public void addSentMessageToHistory(String messageGUID, InetSocketAddress receiverAddress) {
+    public void registerNewNeighbour(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
+        String serviceMessage = metadata.getName() + " joined the chat!";
+        ioController.outServiceMessage(serviceMessage);
+        metadata.setAlive(true);
+        neighbours.put(neighbourAddress, metadata);
+    }
 
+    public void addSentMessageToHistory(String messageGUID, MessageMetadata receiverAddress) {
+        sentMessages.put(messageGUID, receiverAddress);
     }
 
     void terminate() {
         executor.shutdown();
         timerExecutor.shutdown();
-    }
-
-    public Map<InetSocketAddress , NeighbourMetadata> getNeighbours() {
-        return neighbours;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.nsu.kokunin.net.services;
+package ru.nsu.kokunin.net.handlers;
 
 import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.MessageMetadata;

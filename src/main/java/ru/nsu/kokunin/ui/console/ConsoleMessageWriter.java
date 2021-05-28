@@ -9,4 +9,12 @@ public class ConsoleMessageWriter implements MessageWriter {
     public void outMessage(Message message) {
         System.out.println("<" + message.getName() + ">: " + message.getText());
     }
+
+    @Override
+    public void outServiceMessage(String message) {
+
+        //TODO add format
+//        System.out.println(String.format(message, ));
+        System.out.println(message);
+    }
 }

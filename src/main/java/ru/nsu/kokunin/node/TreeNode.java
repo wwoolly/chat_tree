@@ -2,7 +2,8 @@ package ru.nsu.kokunin.node;
 
 import ru.nsu.kokunin.utils.Message;
 import ru.nsu.kokunin.utils.MessageMetadata;
-import ru.nsu.kokunin.utils.NeighbourData;
+import ru.nsu.kokunin.utils.MessageType;
+import ru.nsu.kokunin.utils.NeighbourMetadata;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,7 +14,7 @@ public class TreeNode {
     private final String name;
     private final int port;
     private final int loseRatio;
-    private final List<NeighbourData> neighbours;
+    private final List<NeighbourMetadata> neighbours;
 
     //<GUID, message>
     private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap<>();
@@ -33,18 +34,18 @@ public class TreeNode {
         this.neighbours = Collections.synchronizedList(new ArrayList<>(0));
     }
 
-    public synchronized boolean addNewNeighbour(NeighbourData neighbour) {
+    public synchronized boolean addNewNeighbour(NeighbourMetadata neighbour) {
         //надо?
 //        if (neighbour == null || neighbours.contains(neighbour)) return false;
 
         return neighbours.add(neighbour);
     }
 
-    public synchronized boolean removeNeighbour(NeighbourData neighbour) {
+    public synchronized boolean removeNeighbour(NeighbourMetadata neighbour) {
         return neighbours.remove(neighbour);
     }
 
-    private boolean checkNode(NeighbourData node) {
+    private boolean checkNode(NeighbourMetadata node) {
 //        try {
 //            DatagramSocket datagramSocket = new DatagramSocket();
 //            byte[] pingData = "PING".getBytes(StandardCharsets.UTF_8);
@@ -69,14 +70,14 @@ public class TreeNode {
 //        } catch (IOException exc) {}
 
         try {
-            return node.getAddress().getAddress().isReachable(200);
+            return node.getVice().getAddress().isReachable(200);
         } catch (IOException exc) {
             return false;
         }
     }
 
     public void cacheNewMessage(String messageText) {
-        Message message = new Message(name, messageText);
+        Message message = new Message(name, messageText, MessageType.CHAT);
         MessageMetadata messageMetadata = new MessageMetadata(message, null);
         messages.put(message.getGUID(), messageMetadata);
     }
@@ -89,7 +90,7 @@ public class TreeNode {
         return loseRatio;
     }
 
-    public List<NeighbourData> getNeighbours() {
+    public List<NeighbourMetadata> getNeighbours() {
         return neighbours;
     }
 
