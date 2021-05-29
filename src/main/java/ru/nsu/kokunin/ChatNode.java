@@ -4,16 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.net.Receiver;
 import ru.nsu.kokunin.net.Sender;
-import ru.nsu.kokunin.net.handlers.MessageHandler;
+import ru.nsu.kokunin.net.handlers.*;
 import ru.nsu.kokunin.ui.MessageRecipient;
-import ru.nsu.kokunin.utils.MessageType;
-import ru.nsu.kokunin.utils.NeighbourMetadata;
+import ru.nsu.kokunin.utils.*;
 import ru.nsu.kokunin.ui.console.ConsoleController;
-import ru.nsu.kokunin.utils.Message;
-import ru.nsu.kokunin.utils.MessageMetadata;
 
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -55,15 +53,15 @@ public class ChatNode implements MessageRecipient {
     public InetSocketAddress vice = null;
     public final Map<InetSocketAddress, NeighbourMetadata> neighbours = new ConcurrentHashMap<>();
 
-    //<GUID, message>
-    public final Map<String, MessageMetadata> sentMessages = new ConcurrentHashMap<>();
+    //<GUID, Set<Receiver Address>> info for confirmation
+    public final Map<String, SentMessageMetadata> sentMessages = new ConcurrentHashMap<>();
+    public final Deque<String> receivedMessages = new ConcurrentLinkedDeque<>();
 
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Map<MessageType, MessageHandler> handlers = new HashMap<>();
 
     public ChatNode(String name, int loseRatio, DatagramSocket socket) {
-//        this.neighbours =
         this.loseRatio = loseRatio;
         this.name = name;
         this.socket = socket;
@@ -79,13 +77,40 @@ public class ChatNode implements MessageRecipient {
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
+        handlers.put(MessageType.CHAT, new ChatMessageHandler());
+        handlers.put(MessageType.ACK, new ACKMessageHandler());
+        handlers.put(MessageType.START, new StartMessageHandler());
+        handlers.put(MessageType.ALIVE, new AliveMessageHandler());
+        handlers.put(MessageType.UPDATE, new UpdateMessageHandler());
+
         ioController.addMessageRecipient(this);
         ioController.start();
     }
 
-    public void handleMessage(MessageMetadata message) {
+    public void handleMessage(ReceivedMessageMetadata message) {
         MessageType type = message.getMessage().getType();
         handlers.get(type).handle(message, this);
+    }
+
+    public void outChatMessage(ReceivedMessageMetadata message) {
+        ioController.outMessage(message.getMessage());
+    }
+
+    public void registerSentMessage(Message message, InetSocketAddress receiver) {
+        String guid = message.getGUID();
+        SentMessageMetadata sentMessageMetadata;
+
+        //synchronized?
+        synchronized (sentMessages) {
+            if (sentMessages.containsKey(guid)) {
+                sentMessageMetadata = sentMessages.get(guid);
+            } else {
+                sentMessageMetadata = new SentMessageMetadata(message);
+                sentMessages.put(guid, sentMessageMetadata);
+            }
+        }
+
+        sentMessageMetadata.addReceiver(receiver);
     }
 
     public void registerNewNeighbour(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
@@ -105,10 +130,6 @@ public class ChatNode implements MessageRecipient {
         neighbours.put(neighbourAddress, metadata);
     }
 
-    public void addSentMessageToHistory(String messageGUID, MessageMetadata receiverAddress) {
-        sentMessages.put(messageGUID, receiverAddress);
-    }
-
     void terminate() {
         executor.shutdown();
         timerExecutor.shutdown();
@@ -117,9 +138,6 @@ public class ChatNode implements MessageRecipient {
     @Override
     public void getMessage(String messageText) {
         Message message = new Message(name, messageText, MessageType.CHAT);
-        MessageMetadata messageMetadata = new MessageMetadata(message, (InetSocketAddress) socket.getLocalSocketAddress());
-        messageMetadata.setChecked(true);
-//        messages.put(message.getGUID(), messageMetadata);
-        sender.broadcast(messageMetadata);
+        sender.broadcast(message, (InetSocketAddress) socket.getLocalSocketAddress(), true);
     }
 }

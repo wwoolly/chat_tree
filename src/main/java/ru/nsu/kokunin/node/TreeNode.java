@@ -1,7 +1,7 @@
 package ru.nsu.kokunin.node;
 
 import ru.nsu.kokunin.utils.Message;
-import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 import ru.nsu.kokunin.utils.MessageType;
 import ru.nsu.kokunin.utils.NeighbourMetadata;
 
@@ -17,7 +17,7 @@ public class TreeNode {
     private final List<NeighbourMetadata> neighbours;
 
     //<GUID, message>
-    private ConcurrentMap<String, MessageMetadata> messages = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, ReceivedMessageMetadata> messages = new ConcurrentHashMap<>();
 
 
     public TreeNode(String name, int port, int loseRatio) {
@@ -78,7 +78,7 @@ public class TreeNode {
 
     public void cacheNewMessage(String messageText) {
         Message message = new Message(name, messageText, MessageType.CHAT);
-        MessageMetadata messageMetadata = new MessageMetadata(message, null);
+        ReceivedMessageMetadata messageMetadata = new ReceivedMessageMetadata(message, null);
         messages.put(message.getGUID(), messageMetadata);
     }
 
@@ -94,7 +94,7 @@ public class TreeNode {
         return neighbours;
     }
 
-    public ConcurrentMap<String, MessageMetadata> getMessages() {
+    public ConcurrentMap<String, ReceivedMessageMetadata> getMessages() {
         return messages;
     }
 

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
-import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -61,11 +61,11 @@ public class Receiver implements Runnable {
                 message = jsonConverter.fromJson(jsonMessage, Message.class);
                 senderAddress = (InetSocketAddress) packetToReceive.getSocketAddress();
 
-                chatNode.handleMessage(new MessageMetadata(message, senderAddress));
-
-                packetToReceive.setLength(BUFFER_SIZE);
+                chatNode.handleMessage(new ReceivedMessageMetadata(message, senderAddress));
             } catch (IOException exc) {
                 LOG.error("During socket receiving an exception occurred!", exc);
+            } finally {
+                packetToReceive.setLength(BUFFER_SIZE);
             }
         }
     }

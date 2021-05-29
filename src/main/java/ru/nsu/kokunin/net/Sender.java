@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.JsonConverter;
 import ru.nsu.kokunin.utils.Message;
-import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 import ru.nsu.kokunin.utils.MessageType;
 
 import java.io.IOException;
@@ -31,36 +31,38 @@ public class Sender {
         this.socket = socket;
     }
 
-    /**
-     * Небезопасный метод. Не требует от контроллера подтверждения доставки сообщения. */
-    public void send(Message message, InetSocketAddress receiver) {
+    public void send(Message message, InetSocketAddress receiver, boolean isChecked) {
         try {
             byte[] rawMessage = jsonConverter.toJson(message).getBytes(StandardCharsets.UTF_8);
             DatagramPacket sendPacket = new DatagramPacket(rawMessage, rawMessage.length, receiver);
             socket.send(sendPacket);
+
+            if (isChecked) {
+                chatNode.registerSentMessage(message, receiver);
+            }
+
         } catch (IOException exc) {
             LOG.error("Error during sending message <{}> to \"{}\"", message, receiver, exc);
         }
     }
 
-    public void broadcast(MessageMetadata message) {
+    public void broadcast(Message message, InetSocketAddress senderAddress, boolean isChecked) {
         executor.submit(() -> chatNode.neighbours.keySet().forEach(neighbourAddress -> {
-            if (neighbourAddress.equals(message.getSenderAddress())) {
+            if (neighbourAddress.equals(senderAddress)) {
                 return;
             }
 
-            if (message.isChecked()) {
-                chatNode.addSentMessageToHistory(message.getMessage().getGUID(), message);
-            }
-
-            send(message.getMessage(), neighbourAddress);
+            send(message, neighbourAddress, isChecked);
         }));
+    }
+
+    public void broadcast(ReceivedMessageMetadata message) {
+        broadcast(message.getMessage(), message.getSenderAddress(), message.isChecked());
     }
 
     public void sendACKMessage(String messageToConfirmGUID, InetSocketAddress receiverAddress) {
         Message confirmMessage = new Message(chatNode.name, messageToConfirmGUID, MessageType.ACK);
-        send(confirmMessage, receiverAddress);
+        send(confirmMessage, receiverAddress, false);
     }
-
 
 }

@@ -2,23 +2,23 @@ package ru.nsu.kokunin.utils;
 
 import java.net.InetSocketAddress;
 
-public class MessageMetadata {
+public class ReceivedMessageMetadata {
     private Message message;
     private InetSocketAddress senderAddress;
 
     /**
-     * Требуется ли проверка доставки сообщения\n
+     * Требуется ли ждать узлу подтверждения доставки
+     * этого сообщения
+     *
      * Учитывается только при отправке сообщения,
      * при приёме считаем, что Handler'ы определяют
      * это опираясь на тип сообщения.
      * */
-    boolean isChecked;
+    private boolean isChecked = false;
 
-    public MessageMetadata(Message message, InetSocketAddress senderAddress) {
+    public ReceivedMessageMetadata(Message message, InetSocketAddress senderAddress) {
         this.message = message;
         this.senderAddress = senderAddress;
-
-        isChecked = false;
     }
 
     public boolean isChecked() {

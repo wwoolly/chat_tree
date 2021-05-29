@@ -2,14 +2,14 @@ package ru.nsu.kokunin.net.handlers;
 
 import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.AddressStringPacker;
-import ru.nsu.kokunin.utils.MessageMetadata;
+import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 import ru.nsu.kokunin.utils.NeighbourMetadata;
 
 import java.net.InetSocketAddress;
 
 public class StartMessageHandler implements MessageHandler {
     @Override
-    public void handle(MessageMetadata message, ChatNode chatNode) {
+    public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
         if (chatNode.neighbours.containsKey(message.getSenderAddress())) {
             //TODO а это возможно?
             return;

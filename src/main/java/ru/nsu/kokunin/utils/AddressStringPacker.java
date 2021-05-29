@@ -3,10 +3,7 @@ package ru.nsu.kokunin.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 
 public class AddressStringPacker {
     private final static int IP_ADDRESS_OFFSET = 1;
