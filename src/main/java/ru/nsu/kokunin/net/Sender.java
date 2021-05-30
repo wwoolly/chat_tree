@@ -3,10 +3,7 @@ package ru.nsu.kokunin.net;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ChatNode;
-import ru.nsu.kokunin.utils.JsonConverter;
-import ru.nsu.kokunin.utils.Message;
-import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
-import ru.nsu.kokunin.utils.MessageType;
+import ru.nsu.kokunin.utils.*;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -60,7 +57,6 @@ public class Sender {
     public void broadcast(ReceivedMessageMetadata message) {
         broadcast(message.getMessage(), message.getSenderAddress(), message.isChecked());
     }
-
 
     //TODO вынести эти методы в отдельный интерфейс отправки в зависимости от типа. Неоч,
     //TODO что Receiver ничего не знает о типах сообщений, а сендер знает всё

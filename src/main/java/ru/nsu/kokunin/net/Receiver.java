@@ -43,6 +43,8 @@ public class Receiver implements Runnable {
 
     @Override
     public void run() {
+        log.info("Receiver started");
+
         DatagramPacket packetToReceive = new DatagramPacket(receiverBuffer, BUFFER_SIZE);
         byte[] rawMessage;
         Message message;
@@ -50,7 +52,9 @@ public class Receiver implements Runnable {
 
         while(isActive) {
             try {
+                log.debug("Trying to receive...");
                 socket.receive(packetToReceive);
+                log.debug("Received!");
 
                 if (loseRatio > randomMessageLostGenerator.nextInt(MAX_LOSE_VALUE)) {
                     continue;

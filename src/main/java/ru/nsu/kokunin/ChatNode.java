@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.net.Receiver;
 import ru.nsu.kokunin.net.Sender;
 import ru.nsu.kokunin.net.handlers.*;
+import ru.nsu.kokunin.net.services.AliveNotifier;
+import ru.nsu.kokunin.net.services.NeighbourChecker;
+import ru.nsu.kokunin.net.services.Repeater;
 import ru.nsu.kokunin.ui.MessageRecipient;
 import ru.nsu.kokunin.utils.*;
 import ru.nsu.kokunin.ui.console.ConsoleController;
@@ -16,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class ChatNode implements MessageRecipient {
     /**
      * Time constant in milliseconds.
@@ -24,19 +29,15 @@ public class ChatNode implements MessageRecipient {
     public static final long CONFIRM_TIMEOUT = 2000;
     /**
      * Time constant in milliseconds.
-     * Interval between sending this node is alive messages.
+     * Interval between sending alive messages of this node.
      * */
-    public static final long KEEP_ALIVE_TIMEOUT = 20000;
+    public static final long ALIVE_NOTIFY_INTERVAL = 5000;
     /**
      * Time constant in milliseconds.
-     * Interval between alive messages of the current node.
+     * Time after which the neighbour is considered dead if there isn't
+     * received Alive messages from it.
      * */
-    public static final long ALIVE_MESSAGES_INTERVAL = 5000;
-    /**
-     * Time constant in milliseconds.
-     * Interval between current node read a console.
-     * */
-    public static final long MESSAGE_SCAN_INTERVAL = 2000;
+    public static final long ALIVE_NEIGHBOUR_LIMIT = 20000;
 
     public static final long INITIALIZATION_DELAY = 10000;
     private static final int TIMER_TASKS_NUMBER = 3;
@@ -77,12 +78,19 @@ public class ChatNode implements MessageRecipient {
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
+        timerExecutor.scheduleAtFixedRate(new Repeater(this), INITIALIZATION_DELAY, CONFIRM_TIMEOUT, MILLISECONDS);
+        timerExecutor.scheduleAtFixedRate(new AliveNotifier(this), INITIALIZATION_DELAY, ALIVE_NOTIFY_INTERVAL, MILLISECONDS);
+        timerExecutor.scheduleAtFixedRate(new NeighbourChecker(this), INITIALIZATION_DELAY, ALIVE_NEIGHBOUR_LIMIT, MILLISECONDS);
+        log.info("Timer executors in ChatNode started");
+
         handlers.put(MessageType.CHAT, new ChatMessageHandler());
         handlers.put(MessageType.ACK, new ACKMessageHandler());
         handlers.put(MessageType.START, new StartMessageHandler());
         handlers.put(MessageType.ALIVE, new AliveMessageHandler());
         handlers.put(MessageType.UPDATE, new UpdateMessageHandler());
         handlers.put(MessageType.GET, new GetMessageHandler());
+
+        executor.submit(receiver);
 
         ioController.addMessageRecipient(this);
         ioController.start();

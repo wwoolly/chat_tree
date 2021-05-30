@@ -43,4 +43,8 @@ public class SentMessageMetadata {
 
         return receiverAddresses.add(receiverAddress);
     }
+
+    public List<InetSocketAddress> getRecievers() {
+        return receiverAddresses;
+    }
 }

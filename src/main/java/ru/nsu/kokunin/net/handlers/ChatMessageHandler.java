@@ -9,7 +9,7 @@ public class ChatMessageHandler implements MessageHandler {
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
         chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
 
-        chatNode.ioController.outMessage(message.getMessage());
+        chatNode.outChatMessage(message);
 
         message.setChecked(true);
         chatNode.sender.broadcast(message);
