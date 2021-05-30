@@ -65,4 +65,9 @@ public class Sender {
         send(confirmMessage, receiverAddress, false);
     }
 
+    public void sendAliveMessage(InetSocketAddress receiverAddress) {
+        Message aliveMessage = new Message(chatNode.name, "0", MessageType.ALIVE);
+        send(aliveMessage, receiverAddress, false);
+    }
+
 }
