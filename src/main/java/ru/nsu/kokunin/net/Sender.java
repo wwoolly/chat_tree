@@ -17,7 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Sender {
-    private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
+    private static final String EMPTY_MESSAGE_BODY = "-";
+    private static final Logger log = LoggerFactory.getLogger(Sender.class);
 
     private final ChatNode chatNode;
     private final DatagramSocket socket;
@@ -42,7 +43,7 @@ public class Sender {
             }
 
         } catch (IOException exc) {
-            LOG.error("Error during sending message <{}> to \"{}\"", message, receiver, exc);
+            log.error("Error during sending message <{}> to \"{}\"", message, receiver, exc);
         }
     }
 
@@ -60,14 +61,31 @@ public class Sender {
         broadcast(message.getMessage(), message.getSenderAddress(), message.isChecked());
     }
 
+
+    //TODO вынести эти методы в отдельный интерфейс отправки в зависимости от типа. Неоч,
+    //TODO что Receiver ничего не знает о типах сообщений, а сендер знает всё
     public void sendACKMessage(String messageToConfirmGUID, InetSocketAddress receiverAddress) {
         Message confirmMessage = new Message(chatNode.name, messageToConfirmGUID, MessageType.ACK);
         send(confirmMessage, receiverAddress, false);
     }
 
     public void sendAliveMessage(InetSocketAddress receiverAddress) {
-        Message aliveMessage = new Message(chatNode.name, "0", MessageType.ALIVE);
+        Message aliveMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.ALIVE);
         send(aliveMessage, receiverAddress, false);
     }
 
+    public void sendGetMessage(InetSocketAddress receiverAddress) {
+        Message getMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.GET);
+        send(getMessage, receiverAddress, true);
+    }
+
+    public void sendUpdateMessage(String viceData, InetSocketAddress receiverAddress) {
+        Message updateMesssage = new Message(chatNode.name, viceData, MessageType.UPDATE);
+        send(updateMesssage, receiverAddress, true);
+    }
+
+    public void sendStartMessage(String viceData, InetSocketAddress receiverAddress) {
+        Message startMessage = new Message(chatNode.name, viceData, MessageType.START);
+        send(startMessage, receiverAddress, true);
+    }
 }

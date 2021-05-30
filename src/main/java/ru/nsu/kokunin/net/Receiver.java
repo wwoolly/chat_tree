@@ -18,7 +18,7 @@ public class Receiver implements Runnable {
     private static final int BUFFER_SIZE = 524288;
     private static final int MAX_LOSE_VALUE = 99;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
+    private static final Logger log = LoggerFactory.getLogger(Receiver.class);
 
     private final ChatNode chatNode;
     private final DatagramSocket socket;
@@ -63,7 +63,7 @@ public class Receiver implements Runnable {
 
                 chatNode.handleMessage(new ReceivedMessageMetadata(message, senderAddress));
             } catch (IOException exc) {
-                LOG.error("During socket receiving an exception occurred!", exc);
+                log.error("During socket receiving an exception occurred!", exc);
             } finally {
                 packetToReceive.setLength(BUFFER_SIZE);
             }

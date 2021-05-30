@@ -10,6 +10,8 @@ import java.net.InetSocketAddress;
 public class StartMessageHandler implements MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
+        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+
         if (chatNode.neighbours.containsKey(message.getSenderAddress())) {
             //TODO а это возможно?
             return;

@@ -13,7 +13,7 @@ public class ConsoleController {
     private static final long OUTPUT_MESSAGE_WRITING_INTERVAL = 1000L;
     private static final long WRITER_INITIALIZATION_DELAY = 3000L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConsoleController.class);
+    private static final Logger log = LoggerFactory.getLogger(ConsoleController.class);
 
     private final MessageReader consoleReader;
 
@@ -44,10 +44,10 @@ public class ConsoleController {
             while (!outputMessagesQueue.isEmpty()) {
                 consoleWriter.outMessage(outputMessagesQueue.poll());
             }
-            LOG.trace("Writer executor started");
+            log.trace("Writer executor started");
         }, WRITER_INITIALIZATION_DELAY, OUTPUT_MESSAGE_WRITING_INTERVAL, TimeUnit.MILLISECONDS);
 
-        LOG.info("Console controller started!");
+        log.info("Console controller started!");
 
         while(isActive) {
             while (consoleReader.hasMessage()) {
@@ -57,7 +57,7 @@ public class ConsoleController {
                     recipient.getMessage(messageText);
                 }
 
-                LOG.debug("Message <{}> read from console", messageText);
+                log.debug("Message <{}> read from console", messageText);
             }
         }
     }
@@ -65,7 +65,7 @@ public class ConsoleController {
     public void stop() {
         isActive = false;
         writerExecutor.shutdown();
-        LOG.info("Console controller shut down");
+        log.info("Console controller shut down");
     }
 
     public void outMessage(Message message) {
@@ -73,7 +73,7 @@ public class ConsoleController {
             return;
         }
 
-        LOG.debug("Message <{}> added to output queue", message);
+        log.debug("Message <{}> added to output queue", message);
         outputMessagesQueue.add(message);
     }
 

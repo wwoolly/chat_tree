@@ -41,7 +41,7 @@ public class ChatNode implements MessageRecipient {
     public static final long INITIALIZATION_DELAY = 10000;
     private static final int TIMER_TASKS_NUMBER = 3;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChatNode.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatNode.class);
 
     public final String name;
     public final int loseRatio;
@@ -73,7 +73,7 @@ public class ChatNode implements MessageRecipient {
 
     public void init() {
         if (loseRatio < 0 || loseRatio > 99) {
-            LOG.error("Attempt to initialize ChatNode with the incorrect lose ratio. Value: {} not in [1,99]", loseRatio);
+            log.error("Attempt to initialize ChatNode with the incorrect lose ratio. Value: {} not in [1,99]", loseRatio);
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
@@ -82,6 +82,7 @@ public class ChatNode implements MessageRecipient {
         handlers.put(MessageType.START, new StartMessageHandler());
         handlers.put(MessageType.ALIVE, new AliveMessageHandler());
         handlers.put(MessageType.UPDATE, new UpdateMessageHandler());
+        handlers.put(MessageType.GET, new GetMessageHandler());
 
         ioController.addMessageRecipient(this);
         ioController.start();
@@ -114,7 +115,7 @@ public class ChatNode implements MessageRecipient {
     }
 
     public void registerNewNeighbour(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
-        LOG.info("Connected new node! Name: {}, Address: {}, Vice: {}",
+        log.info("Connected new node! Name: {}, Address: {}, Vice: {}",
                 metadata.getName(), neighbourAddress, metadata.getVice());
 
         String serviceMessage = metadata.getName() + " joined the chat!";
@@ -123,7 +124,7 @@ public class ChatNode implements MessageRecipient {
     }
 
     public void updateNeighbourMetadata(InetSocketAddress neighbourAddress, NeighbourMetadata metadata) {
-        LOG.info("New data about neighbour \'{}\'; Address: {}; Vice: {},  saved",
+        log.info("New data about neighbour '{}'; Address: {}; Vice: {},  saved",
                 metadata.getName(), neighbourAddress, metadata.getVice());
 
         metadata.setAlive(true);

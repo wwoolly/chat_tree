@@ -6,6 +6,7 @@ import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 public class AliveMessageHandler implements MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
+        //в теории никогда не null
         if (message.getSenderAddress() == null) {
             return;
         }

@@ -7,6 +7,8 @@ public class ChatMessageHandler implements MessageHandler {
 
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
+        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+
         chatNode.ioController.outMessage(message.getMessage());
 
         message.setChecked(true);

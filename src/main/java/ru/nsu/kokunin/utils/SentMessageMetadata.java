@@ -24,6 +24,10 @@ public class SentMessageMetadata {
         return receiverAddresses.contains(receiverAddress);
     }
 
+    public boolean hasNoReceivers() {
+        return receiverAddresses.isEmpty();
+    }
+
     public boolean removeReceiver(InetSocketAddress receiverAddress) {
         if (receiverAddress == null) {
             return false;

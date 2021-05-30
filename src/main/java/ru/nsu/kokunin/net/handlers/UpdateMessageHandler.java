@@ -10,6 +10,8 @@ import java.net.InetSocketAddress;
 public class UpdateMessageHandler implements MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
+        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+
         InetSocketAddress newVice = AddressStringPacker.unpackAddress(message.getMessage().getText());
         if (newVice != null) {
             NeighbourMetadata newMetadata = new NeighbourMetadata(newVice, message.getMessage().getName());

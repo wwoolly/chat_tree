@@ -5,5 +5,6 @@ public enum MessageType {
     ACK,
     START,
     ALIVE,
-    UPDATE
+    UPDATE,
+    GET
 }
