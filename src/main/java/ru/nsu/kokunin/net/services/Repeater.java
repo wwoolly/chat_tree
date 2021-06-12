@@ -20,5 +20,6 @@ public class Repeater implements Runnable {
                 chatNode.sender.send(message.getMessage(), address, true);
             }));
         });
+//        this.set>
     }
 }
