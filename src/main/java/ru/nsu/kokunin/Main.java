@@ -16,7 +16,7 @@ public class Main {
         int port = Integer.parseInt(args[1]);
         int loseRatio = Integer.parseInt(args[2]);
 
-
+        //test
         DatagramSocket socket;
         try {
             socket = new DatagramSocket(port);
