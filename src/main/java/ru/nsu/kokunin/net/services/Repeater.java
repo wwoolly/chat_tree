@@ -3,7 +3,6 @@ package ru.nsu.kokunin.net.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nsu.kokunin.ChatNode;
-import ru.nsu.kokunin.node.TreeNode;
 
 public class Repeater implements Runnable {
     private final static Logger log = LoggerFactory.getLogger(Repeater.class);

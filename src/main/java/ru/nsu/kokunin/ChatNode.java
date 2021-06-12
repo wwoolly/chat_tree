@@ -92,6 +92,16 @@ public class ChatNode implements MessageRecipient {
 
         executor.submit(receiver);
 
+        if (!neighbours.isEmpty()) {
+            vice = neighbours.keySet().iterator().next();
+            String viceStr = AddressStringPacker.packAddress(vice);
+            neighbours.forEach((k, v) -> {
+                sender.sendStartMessage(viceStr, k);
+            });
+        } else {
+            vice = null;
+        }
+
         ioController.addMessageRecipient(this);
         ioController.start();
     }
