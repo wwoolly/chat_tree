@@ -15,9 +15,9 @@ public class Repeater implements Runnable {
 
     @Override
     public void run() {
-        chatNode.sentMessages.forEach((guid, message) -> {
+        chatNode.getSentMessages().forEach((guid, message) -> {
             message.getRecievers().forEach((address -> {
-                chatNode.sender.send(message.getMessage(), address, true);
+                chatNode.getSender().send(message.getMessage(), address, true);
             }));
         });
     }

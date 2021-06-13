@@ -26,37 +26,37 @@ public class ChatNode implements MessageRecipient {
      * Time constant in milliseconds.
      * Interval between message confirmation requests.
      * */
-    public static final long CONFIRM_TIMEOUT = 2000;
+    private static final long CONFIRM_TIMEOUT = 2000;
     /**
      * Time constant in milliseconds.
      * Interval between sending alive messages of this node.
      * */
-    public static final long ALIVE_NOTIFY_INTERVAL = 5000;
+    private static final long ALIVE_NOTIFY_INTERVAL = 5000;
     /**
      * Time constant in milliseconds.
      * Time after which the neighbour is considered dead if there isn't
      * received Alive messages from it.
      * */
-    public static final long ALIVE_NEIGHBOUR_LIMIT = 20000;
+    private static final long ALIVE_NEIGHBOUR_LIMIT = 20000;
 
-    public static final long INITIALIZATION_DELAY = 10000;
+    private static final long INITIALIZATION_DELAY = 10000;
     private static final int TIMER_TASKS_NUMBER = 3;
 
     private static final Logger log = LoggerFactory.getLogger(ChatNode.class);
 
-    public final String name;
-    public final int loseRatio;
-    public final DatagramSocket socket;
-    public final Sender sender;
-    public final Receiver receiver;
-    public final ConsoleController ioController;
+    private final String name;
+    private final int loseRatio;
+    private final DatagramSocket socket;
+    private final Sender sender;
+    private final Receiver receiver;
+    private final ConsoleController ioController;
 
-    public InetSocketAddress vice = null;
-    public final Map<InetSocketAddress, NeighbourMetadata> neighbours = new ConcurrentHashMap<>();
+    private InetSocketAddress vice = null;
+    private final Map<InetSocketAddress, NeighbourMetadata> neighbours = new ConcurrentHashMap<>();
 
     //<GUID, Set<Receiver Address>> info for confirmation
-    public final Map<String, SentMessageMetadata> sentMessages = new ConcurrentHashMap<>();
-    public final Deque<String> receivedMessages = new ConcurrentLinkedDeque<>();
+    private final Map<String, SentMessageMetadata> sentMessages = new ConcurrentHashMap<>();
+    private final Deque<String> receivedMessages = new ConcurrentLinkedDeque<>();
 
     private final ScheduledExecutorService timerExecutor = Executors.newScheduledThreadPool(TIMER_TASKS_NUMBER);
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -147,6 +147,30 @@ public class ChatNode implements MessageRecipient {
 
         metadata.setAlive(true);
         neighbours.put(neighbourAddress, metadata);
+    }
+
+    public Message createMessage(String text, MessageType type) {
+        return new Message(name, text, type);
+    }
+
+    public InetSocketAddress getVice() {
+        return vice;
+    }
+
+    public void setVice(InetSocketAddress vice) {
+        this.vice = vice;
+    }
+
+    public Sender getSender() {
+        return sender;
+    }
+
+    public Map<InetSocketAddress, NeighbourMetadata> getNeighbours() {
+        return neighbours;
+    }
+
+    public Map<String, SentMessageMetadata> getSentMessages() {
+        return sentMessages;
     }
 
     void terminate() {

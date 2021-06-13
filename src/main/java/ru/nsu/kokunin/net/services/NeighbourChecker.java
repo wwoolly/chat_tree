@@ -19,7 +19,7 @@ public class NeighbourChecker implements Runnable {
 
     @Override
     public void run() {
-        var neighbourIterator = chatNode.neighbours.entrySet().iterator();
+        var neighbourIterator = chatNode.getNeighbours().entrySet().iterator();
         InetSocketAddress vice;
 
         while (neighbourIterator.hasNext()) {
@@ -28,8 +28,8 @@ public class NeighbourChecker implements Runnable {
 
             if (!entry.getValue().isAlive()) {
                 if (vice != null) {
-                    chatNode.neighbours.put(vice, new NeighbourMetadata(null, null));
-                    chatNode.sender.sendGetMessage(vice);
+                    chatNode.getNeighbours().put(vice, new NeighbourMetadata(null, null));
+                    chatNode.getSender().sendGetMessage(vice);
                 }
 
                 clearSentMessages(entry.getKey());
@@ -41,12 +41,12 @@ public class NeighbourChecker implements Runnable {
             }
         }
 
-        chatNode.neighbours.forEach((k, v) -> v.setAlive(false));
+        chatNode.getNeighbours().forEach((k, v) -> v.setAlive(false));
     }
 
     private void clearSentMessages(InetSocketAddress neighbourAddress) {
         //вынести в отдельный метод ChatNode
-        var sentMessages = chatNode.sentMessages;
+        var sentMessages = chatNode.getSentMessages();
         var iterator = sentMessages.entrySet().iterator();
 
         while(iterator.hasNext()) {
@@ -61,13 +61,12 @@ public class NeighbourChecker implements Runnable {
     }
 
     private void isNeighbourVice(InetSocketAddress neighbour) {
-        if (neighbour.equals(chatNode.vice)) {
-            chatNode.vice
-                    = chatNode.neighbours.isEmpty()
-                    ? null
-                    : chatNode.neighbours.keySet().iterator().next();
+        if (neighbour.equals(chatNode.getVice())) {
+            chatNode.setVice(
+                    chatNode.getNeighbours().isEmpty() ? null : chatNode.getNeighbours().keySet().iterator().next()
+            );
 
-            log.info("Set new vice for this node [{}]", chatNode.vice);
+            log.info("Set new vice for this node [{}]", chatNode.getVice());
         }
     }
 }

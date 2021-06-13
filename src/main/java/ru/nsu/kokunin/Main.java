@@ -16,7 +16,6 @@ public class Main {
         int port = Integer.parseInt(args[1]);
         int loseRatio = Integer.parseInt(args[2]);
 
-        //test3
         DatagramSocket socket;
         try {
             socket = new DatagramSocket(port);
@@ -36,8 +35,8 @@ public class Main {
 
             try {
                 InetSocketAddress socketAddress = new InetSocketAddress(neighbourAddress, neighbourPort);
-                chatNode.neighbours.put(socketAddress, new NeighbourMetadata(null, null));
-//                chatNode.registerNewNeighbour(socketAddress, new NeighbourMetadata(null, null));
+//                chatNode.neighbours.put(socketAddress, new NeighbourMetadata(null, null));
+                chatNode.registerNewNeighbour(socketAddress, new NeighbourMetadata(null, null));
             } catch (SecurityException exc) {
                 log.error("Security exception during trying to parse input neighbour data", exc);
             } catch (IllegalArgumentException exc) {

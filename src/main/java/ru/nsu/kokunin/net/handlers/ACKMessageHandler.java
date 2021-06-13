@@ -9,6 +9,6 @@ public class ACKMessageHandler extends MessageHandler {
         super.handle(message, chatNode);
 
         String messageToConfirmGUID = message.getMessage().getText();
-        chatNode.sentMessages.remove(messageToConfirmGUID);
+        chatNode.getSentMessages().remove(messageToConfirmGUID);
     }
 }

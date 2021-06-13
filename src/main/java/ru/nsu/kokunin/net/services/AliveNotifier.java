@@ -11,6 +11,6 @@ public class AliveNotifier implements Runnable {
 
     @Override
     public void run() {
-        chatNode.neighbours.keySet().forEach(chatNode.sender::sendAliveMessage);
+        chatNode.getNeighbours().keySet().forEach(chatNode.getSender()::sendAliveMessage);
     }
 }

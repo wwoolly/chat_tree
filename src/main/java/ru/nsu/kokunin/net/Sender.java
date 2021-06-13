@@ -45,7 +45,7 @@ public class Sender {
     }
 
     public void broadcast(Message message, InetSocketAddress senderAddress, boolean isChecked) {
-        executor.submit(() -> chatNode.neighbours.keySet().forEach(neighbourAddress -> {
+        executor.submit(() -> chatNode.getNeighbours().keySet().forEach(neighbourAddress -> {
             if (neighbourAddress.equals(senderAddress)) {
                 return;
             }
@@ -61,27 +61,32 @@ public class Sender {
     //TODO вынести эти методы в отдельный интерфейс отправки в зависимости от типа. Неоч,
     //TODO что Receiver ничего не знает о типах сообщений, а сендер знает всё
     public void sendACKMessage(String messageToConfirmGUID, InetSocketAddress receiverAddress) {
-        Message confirmMessage = new Message(chatNode.name, messageToConfirmGUID, MessageType.ACK);
+        Message confirmMessage = chatNode.createMessage(messageToConfirmGUID, MessageType.ACK);
+//        Message confirmMessage = new Message(chatNode.name, messageToConfirmGUID, MessageType.ACK);
         send(confirmMessage, receiverAddress, false);
     }
 
     public void sendAliveMessage(InetSocketAddress receiverAddress) {
-        Message aliveMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.ALIVE);
+        Message aliveMessage = chatNode.createMessage(EMPTY_MESSAGE_BODY, MessageType.ALIVE);
+//        Message aliveMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.ALIVE);
         send(aliveMessage, receiverAddress, false);
     }
 
     public void sendGetMessage(InetSocketAddress receiverAddress) {
-        Message getMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.GET);
+        Message getMessage = chatNode.createMessage(EMPTY_MESSAGE_BODY, MessageType.GET);
+//        Message getMessage = new Message(chatNode.name, EMPTY_MESSAGE_BODY, MessageType.GET);
         send(getMessage, receiverAddress, true);
     }
 
     public void sendUpdateMessage(String viceData, InetSocketAddress receiverAddress) {
-        Message updateMesssage = new Message(chatNode.name, viceData, MessageType.UPDATE);
+        Message updateMesssage = chatNode.createMessage(viceData, MessageType.UPDATE);
+//        Message updateMesssage = new Message(chatNode.name, viceData, MessageType.UPDATE);
         send(updateMesssage, receiverAddress, true);
     }
 
     public void sendStartMessage(String viceData, InetSocketAddress receiverAddress) {
-        Message startMessage = new Message(chatNode.name, viceData, MessageType.START);
+        Message startMessage = chatNode.createMessage(viceData, MessageType.START);
+//        Message startMessage = new Message(chatNode.name, viceData, MessageType.START);
         send(startMessage, receiverAddress, true);
     }
 }
