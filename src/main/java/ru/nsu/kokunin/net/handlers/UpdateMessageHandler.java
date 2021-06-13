@@ -7,10 +7,12 @@ import ru.nsu.kokunin.utils.NeighbourMetadata;
 
 import java.net.InetSocketAddress;
 
-public class UpdateMessageHandler implements MessageHandler {
+public class UpdateMessageHandler extends MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
-        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+        super.handle(message, chatNode);
+
+        chatNode.getSender().sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
 
         InetSocketAddress newVice = AddressStringPacker.unpackAddress(message.getMessage().getText());
         if (newVice != null) {

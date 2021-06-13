@@ -4,17 +4,17 @@ import ru.nsu.kokunin.ChatNode;
 import ru.nsu.kokunin.utils.AddressStringPacker;
 import ru.nsu.kokunin.utils.ReceivedMessageMetadata;
 
-public class GetMessageHandler implements MessageHandler {
+public class GetMessageHandler extends MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
-        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+        chatNode.getSender().sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
 
         //не совсем красиво, зато просто
-        if (chatNode.vice == null) {
+        if (chatNode.getVice() == null) {
             return;
         }
 
-        String viceData = AddressStringPacker.packAddress(chatNode.vice);
-        chatNode.sender.sendUpdateMessage(viceData, message.getSenderAddress());
+        String viceData = AddressStringPacker.packAddress(chatNode.getVice());
+        chatNode.getSender().sendUpdateMessage(viceData, message.getSenderAddress());
     }
 }

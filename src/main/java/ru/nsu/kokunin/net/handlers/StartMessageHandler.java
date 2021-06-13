@@ -7,13 +7,18 @@ import ru.nsu.kokunin.utils.NeighbourMetadata;
 
 import java.net.InetSocketAddress;
 
-public class StartMessageHandler implements MessageHandler {
+public class StartMessageHandler extends MessageHandler {
     @Override
     public void handle(ReceivedMessageMetadata message, ChatNode chatNode) {
-        chatNode.sender.sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+        super.handle(message, chatNode);
+        super.log.info("Received START message from node '{}'; address: {}",
+                message.getMessage().getName(), message.getSenderAddress());
 
-        if (chatNode.neighbours.containsKey(message.getSenderAddress())) {
-            //TODO а это возможно?
+        chatNode.getSender().sendACKMessage(message.getMessage().getGUID(), message.getSenderAddress());
+
+        if (chatNode.getNeighbours().containsKey(message.getSenderAddress())) {
+            super.log.info("Node '{}' with address: {} is already registered as a neighbour",
+                    message.getMessage().getName(), message.getSenderAddress());
             return;
         }
 
