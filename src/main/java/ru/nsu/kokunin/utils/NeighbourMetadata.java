@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 
 public class NeighbourMetadata {
     private InetSocketAddress vice;
-    private String name;
+    private final String name;
 
     private boolean isAlive = true;
 
