@@ -78,9 +78,21 @@ public class ChatNode implements MessageRecipient {
             throw new IllegalArgumentException("Incorrect lose ratio! Value: " + loseRatio + '!');
         }
 
-        timerExecutor.scheduleAtFixedRate(new Repeater(this), INITIALIZATION_DELAY, CONFIRM_TIMEOUT, MILLISECONDS);
-        timerExecutor.scheduleAtFixedRate(new AliveNotifier(this), INITIALIZATION_DELAY, ALIVE_NOTIFY_INTERVAL, MILLISECONDS);
-        timerExecutor.scheduleAtFixedRate(new NeighbourChecker(this), INITIALIZATION_DELAY, ALIVE_NEIGHBOUR_LIMIT, MILLISECONDS);
+        timerExecutor.scheduleAtFixedRate(
+                new Repeater(this),
+                INITIALIZATION_DELAY,
+                CONFIRM_TIMEOUT, MILLISECONDS
+        );
+        timerExecutor.scheduleAtFixedRate(
+                new AliveNotifier(this),
+                INITIALIZATION_DELAY,
+                ALIVE_NOTIFY_INTERVAL, MILLISECONDS
+        );
+        timerExecutor.scheduleAtFixedRate(
+                new NeighbourChecker(this),
+                INITIALIZATION_DELAY,
+                ALIVE_NEIGHBOUR_LIMIT, MILLISECONDS
+        );
         log.info("Timer executors in ChatNode started");
 
         handlers.put(MessageType.CHAT, new ChatMessageHandler());

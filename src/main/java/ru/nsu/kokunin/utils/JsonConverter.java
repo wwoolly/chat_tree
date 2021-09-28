@@ -3,7 +3,7 @@ package ru.nsu.kokunin.utils;
 import com.google.gson.Gson;
 
 public class JsonConverter {
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public <T> String toJson(T object) {
         return gson.toJson(object);
